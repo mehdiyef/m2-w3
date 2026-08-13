@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo list</title>
+  </head>
+  <style>
+    h1 {
+      text-align: center;
+      text-transform: capitalize;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .input-container {
+      width: max-content;
+      margin-inline: auto;
+    }
+
+    .input-container input {
+      width: 250px;
+      font-size: 18px;
+      border: none;
+      background-color: hsl(0, 0%, 80%);
+      padding: 10px 15px;
+      outline: none;
+      border: 1px solid hsl(0, 0%, 40%);
+      border-radius: 5px;
+    }
+    .input-container button {
+      font-weight: bold;
+      font-size: 18px;
+      background-color: hsl(226, 37%, 20%);
+      padding: 10px 15px;
+      color: white;
+      text-transform: capitalize;
+      border: 1px solid hsl(226, 37%, 20%);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .todo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+      margin-inline: auto;
+      width: max-content;
+    }
+
+    .individual-todo {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-width: 700px;
+      align-items: center;
+      border: 2px solid hsl(240, 100%, 20%);
+      padding-inline: 20px;
+      border-radius: 10px;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      box-shadow: 0 0 5px gray;
+      color: black;
+    }
+    .animation-effect {
+      animation: display-from 0.8s ease;
+    }
+    @keyframes display-from {
+      from {
+        transform: rotate(30deg);
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+        transform: rotate(0);
+      }
+    }
+    .button {
+      cursor: pointer;
+      font-size: 15px;
+      padding: 5px 10px;
+      margin-left: 10px;
+      border-radius: 5px;
+      color: white;
+      background-color: green;
+      border: none;
+      font-weight: bold;
+    }
+    .delete {
+      background-color: hsl(0, 100%, 30%);
+      border-radius: 0;
+    }
+  </style>
+  <body>
+    <h1>to do list</h1>
+    <div class="input-container">
+      <input class="input-acceptor" type="text" placeholder="Enter your todo" />
+      <button onclick="add_todo()">add</button>
+    </div>
+
+    <div class="todo-container">
+      <!-- <div class="individual-todo">
+        <h3>make a payment</h3>
+        <div>
+          <button class="button delete">delete</button>
+          <button class="button move-uo">move-up</button>
+          <button class="button move-down">move-down</button>
+        </div>
+      </div>
+      <div class="individual-todo">
+        <h3>out the trash</h3>
+        <div>
+          <button class="button delete">delete</button>
+          <button class="button move-uo">move-up</button>
+          <button class="button move-down">move-down</button>
+        </div>
+      </div>
+      <div class="individual-todo">
+        <h3>clean the house</h3>
+        <div>
+          <button class="button delete">delete</button>
+          <button class="button">move-up</button>
+          <button class="button">move-down</button>
+        </div>
+      </div> -->
+    </div>
+    <script>
+      const todo_input = document.querySelector(".input-acceptor");
+      const todo_list_container = document.querySelector(".todo-container");
+
+      let todo = JSON.parse(localStorage.getItem("todo"));
+
+      function todo_render() {
+        let todo_array = "";
+        todo.forEach((todos, index) => {
+          todo_array += ` 
+         <div class="individual-todo">
+          <h3>${todos}</h3>
+          <div>
+            <button 
+              class="button delete" 
+              onclick="deleteTodo(${index})"
+            >delete</button>
+            <button class="button" onclick="move_up(${index})">👆️</button>
+            <button class="button" onclick="move_down(${index})">👇️</button>
+          </div>
+        </div>
+        `;
+          // console.log(todo_html);
+          // todo.push(todo_html);
+        });
+        todo.length === 0
+          ? (todo_list_container.innerHTML =
+              "<h2 style='font-size: 30px; text-transform: capitalize; font-family: arial;'>add something to see your todo</h2>")
+          : (todo_list_container.innerHTML = todo_array);
+      }
+      todo_render();
+
+      function deleteTodo(index) {
+        todo.splice(index, 1);
+        console.log(todo);
+        todo_render();
+        localStorage.setItem("todo", JSON.stringify(todo));
+      }
+      function add_todo() {
+        if (todo_input.value) {
+          todo.push(todo_input.value);
+          todo_render();
+          document.querySelectorAll(".individual-todo").forEach((element) => {
+            element.classList.add("animation-effect");
+          });
+        }
+        todo_input.value = "";
+
+        localStorage.setItem("todo", JSON.stringify(todo));
+      }
+
+      function move_down(index) {
+        if (index < todo.length - 1) {
+          [todo[index], todo[index + 1]] = [todo[index + 1], todo[index]];
+        }
+        localStorage.setItem("todo", JSON.stringify(todo));
+        todo_render();
+      }
+      function move_up(index) {
+        if (index > 0) {
+          [todo[index], todo[index - 1]] = [todo[index - 1], todo[index]];
+        }
+        localStorage.setItem("todo", JSON.stringify(todo));
+        todo_render();
+      }
+      // console.log(todo_render());
+    </script>
+  </body>
+</html>
